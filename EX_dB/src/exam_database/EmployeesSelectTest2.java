@@ -17,7 +17,7 @@ public class EmployeesSelectTest2 {
                                               "JOIN departments d USING(department_id) " +
                                               "GROUP BY department_name")) {
 
-            System.out.println("부서명\t\t\t사원수");
+            System.out.println("부서명\t\t     사원수");
             System.out.println("-----------------------------");
 
             while (rs.next()) {
