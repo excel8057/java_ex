@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class SubjectDAO {
     // 데이터베이스 연결 관련 상수 선언
-    private static final String JDBC_URL = "jdbc:oracle:thin:@127.0.0.1:1521/xepdb1";
+    private static final String JDBC_URL = "jdbc:oracle:thin:@127.0.0.1:1522/xepdb1";
     private static final String USER = "javauser";
     private static final String PASSWD = "java1234";
 
@@ -80,6 +80,150 @@ public class SubjectDAO {
             System.err.println("error = [ "+e.getMessage()+" ]");
         }
         
+        return list;
+    }
+    public String getSubjectNum() {
+    	int subjectNum = 0;
+    	
+    	StringBuffer sql = new StringBuffer();
+    	sql.append("select max(s_num)+1 maxNum from subject ");
+ 
+    	try (Connection conn = getConnection();
+    			PreparedStatement pstmt = conn.prepareStatement(sql.toString());
+    			ResultSet rs = pstmt.executeQuery();){
+    		
+    		rs.next();
+    		subjectNum = rs.getInt("maxNum");
+
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+    	return String.format("%02d", subjectNum);
+    }
+    public boolean subjectInsert(SubjectVO subjectVo) {
+    	boolean success = false;
+    	
+    	StringBuffer sql = new StringBuffer();
+    	sql.append("insert into subject(no, s_num, s_name) ");
+    	sql.append("values (subject_seq.nextval, ?, ?) " );
+    	
+    	try (Connection conn = getConnection();
+    			PreparedStatement pstmt = conn.prepareStatement(sql.toString())){
+			pstmt.setString(1, subjectVo.getS_num());
+			pstmt.setString(2, subjectVo.getS_name());
+			
+			int i = pstmt.executeUpdate();
+			if(i == 1) success = true;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return success;
+    }
+    public boolean subjectUpdate(SubjectVO svo) {
+        boolean success = false;
+
+        StringBuffer sql = new StringBuffer();
+        sql.append("update subject set s_name = ? ");
+        sql.append("where s_num = ?");
+
+        try (Connection conn = getConnection();
+        	 PreparedStatement pstmt = conn.prepareStatement(sql.toString());
+        	){
+ 
+            pstmt.setString(1, svo.getS_name());
+            pstmt.setString(2, svo.getS_num());
+
+            int i = pstmt.executeUpdate();
+            if(i == 1) {
+                success = true;
+            }
+        }catch(SQLException se) {
+            System.out.println("수정에 문제가 있어 잠시 후에 다시 진행해 주세요.");
+            se.printStackTrace();
+        }catch (Exception e){
+            System.out.println("error = [ "+e+" ]");
+        } 
+        return success;
+    }
+    public int studentDataCheck(SubjectVO svo) {
+        StringBuffer  sql    = new StringBuffer();
+        sql.append("select count(sd_num) from student ");
+        sql.append("where s_num = ?");
+
+        ResultSet rs = null;
+        int data = 0;
+        try (Connection con = getConnection();
+        	 PreparedStatement pstmt = con.prepareStatement(sql.toString());
+        	){
+
+            pstmt.setString(1, svo.getS_num());
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                data = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            System.out.println("쿼리 studentDataCheck error = [ "+se+" ]");
+            se.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("error = [ "+e+" ]");
+        } finally {
+            try {
+                if (rs != null) rs.close();
+            } catch (SQLException se) {
+                System.out.println("디비 연동 해제 error = [ "+se+" ]");
+            }
+        }
+        return data;
+    }
+    public boolean subjectDelete(SubjectVO svo) {
+        boolean success = false;
+
+        StringBuffer sql = new StringBuffer();
+        sql.append("delete from subject where s_num = ?");
+        try(Connection conn = getConnection();
+        	PreparedStatement pstmt = conn.prepareStatement(sql.toString());
+        	) {
+
+            pstmt.setString(1, svo.getS_num());
+
+            int i = pstmt.executeUpdate();
+            if(i == 1) {
+                success = true;
+            }
+        }catch(SQLException se) {
+            System.out.println("삭제에 문제가 있어 잠시 후에 다시 진행해 주세요.");
+            se.printStackTrace();
+        }catch (Exception e){
+            System.out.println("error = [ "+e+" ]");
+        } 
+        return success;
+    }
+   
+    public ArrayList<SubjectVO> subjectSearch(SubjectVO svo) {
+		SubjectVO result = null;
+		ArrayList<SubjectVO> list = new ArrayList<SubjectVO>();
+
+        StringBuffer sql = new StringBuffer();
+        sql.append("select * from subject where s_name like ?");
+        try(Connection conn = getConnection();
+        	PreparedStatement pstmt = conn.prepareStatement(sql.toString());
+        	) {
+
+        	pstmt.setString(1, "%" + svo.getS_name() + "%");
+
+            try (ResultSet rs = pstmt.executeQuery()) { 
+                while (rs.next()) { // rs.next() result = new SubjectVO();
+                    result.setNo(rs.getInt("no"));
+                    result.setS_num(rs.getString("s_num"));
+              result.setS_name(rs.getString("s_name"));
+                    list.add(result); 
+                }
+            }
+        }
+		catch (SQLException se) {
+            System.out.println("쿼리 studentDataCheck error = [ "+se+" ]");
+            se.printStackTrace();
+        }        
         return list;
     }
 }

@@ -12,7 +12,8 @@ public class AcademicManagement {
             MenuViewer.showTopMenu();
             topMenuchoice = MenuViewer.keyboard.nextInt();
             MenuViewer.keyboard.nextLine();
-
+            
+            // 예전된 번호가 아니면 재시작
             if(topMenuchoice < 1 || topMenuchoice > 3) {
                 System.out.println("메뉴 선택을 처음부터 다시 진행합니다.\n");
                 continue;
@@ -29,12 +30,11 @@ public class AcademicManagement {
 
             if(topMenuchoice == 1) {
             	switch(subMenuchoice){
-            	case 1 ->  //System.out.println("조회");
-            				subject.read();
-            	case 2 ->  System.out.println("입력");	
-            	case 3 ->  System.out.println("수정");
-            	case 4 ->  System.out.println("삭제");	
-            	case 5 ->  System.out.println("검색(학과명)");
+            	case 1 -> subject.read();
+            	case 2 -> subject.create();	
+            	case 3 -> subject.update();
+            	case 4 -> subject.delete();	
+            	case 5 ->  System.out.println("검색(학과명)"); // select s_name from subject
             	default -> System.out.println("조회, 입력, 수정, 삭제, 검색 중에 하나를 선택해 주면 됩니다");
             	}
             } else if(topMenuchoice == 2) {
