@@ -12,8 +12,7 @@ public class SubjectManagement {
     	  System.out.println("\n**** subject 테이블 데이터 출력 ****");
           System.out.println("번호\t학과번호\t학과명");
           if(svo.size() > 0) {
-              //for(int i = 0; i < svo.size(); i++){
-              // SubjectVO sub = svo.get(i);
+
               for(SubjectVO sub : svo) {
                   System.out.print(sub.getNo()+"\t");
                   System.out.print(sub.getS_num()+"\t");
@@ -85,6 +84,19 @@ public class SubjectManagement {
         }
     }
     public void search() {
-    	
+    	SubjectVO svo = inputData("search");
+        System.out.println("검색 단어 :"+svo.getS_name());
+
+        ArrayList<SubjectVO> list = dao.getsubjectSearch(svo.getS_name());
+        System.out.println("번호\t학과번호\t학과명");
+        if(list.size()>0){
+            for(SubjectVO sub : list){
+                System.out.print(sub.getNo()+"\t");
+                System.out.print(sub.getS_num()+"\t");
+                System.out.println(sub.getS_name()+"\t");
+            }
+        } else {
+            System.out.println("학과 정보가 존재하지 않습니다.");
+        }
     }
 }

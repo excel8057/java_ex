@@ -199,7 +199,8 @@ public class SubjectDAO {
         return success;
     }
    
-    public ArrayList<SubjectVO> subjectSearch(SubjectVO svo) {
+    @SuppressWarnings("null")
+	public ArrayList<SubjectVO> getsubjectSearch(String s_name){
 		SubjectVO result = null;
 		ArrayList<SubjectVO> list = new ArrayList<SubjectVO>();
 
@@ -209,10 +210,10 @@ public class SubjectDAO {
         	PreparedStatement pstmt = conn.prepareStatement(sql.toString());
         	) {
 
-        	pstmt.setString(1, "%" + svo.getS_name() + "%");
+        	pstmt.setString(1, "%" + s_name + "%");
 
             try (ResultSet rs = pstmt.executeQuery()) { 
-                while (rs.next()) { // rs.next() result = new SubjectVO();
+                while (rs.next()) {
                     result.setNo(rs.getInt("no"));
                     result.setS_num(rs.getString("s_num"));
               result.setS_name(rs.getString("s_name"));
@@ -226,4 +227,5 @@ public class SubjectDAO {
         }        
         return list;
     }
+
 }

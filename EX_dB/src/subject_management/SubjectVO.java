@@ -9,7 +9,7 @@ public class SubjectVO {
     private int no;              //번호(테이블의 컬럼명과 동일하게 명시.)
     private String s_num;        //subjectNumber, sNum //학과번호
     private String s_name;       //subjectName, sName  //학과명
-//   private String deleteable;   //삭제여부
+    private String deleteable;   //삭제여부
 
     public SubjectVO() { }
 
